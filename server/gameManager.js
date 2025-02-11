@@ -3,6 +3,9 @@ import { User } from './user';
 
 const mapOfRooms = new Map();
 
+
+
+
 export class GameManager {
     constructor() {
         this.users = [];

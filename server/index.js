@@ -2,7 +2,7 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 
-const PORT = 8080;
+const PORT = 3000;
 const BACKEND_URL = 'http://localhost';
 
 const app = express();
