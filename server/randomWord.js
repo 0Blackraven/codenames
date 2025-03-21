@@ -10,7 +10,7 @@ async function getRandomWords() {
     }
 
     try {
-        const text = await fs.readFile("words.txt", "utf-8");
+        const text = await fs.readFile("./words.txt", "utf-8");
         const words = text.split(/\r?\n/); // Handle different OS line endings
 
         // Define values: 9 red, 8 blue, 7 neutral, 1 black

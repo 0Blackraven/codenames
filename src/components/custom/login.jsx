@@ -35,6 +35,7 @@ export default function Login(
     Socket.emit("createRoom",  username );
     Socket.once("Successfull", ( code ) => {
         setCode(code);
+
         console.log(code);
     });
     setSignupNext(1);
@@ -42,6 +43,8 @@ export default function Login(
 
   const handleJoinClick = (e) => {
       // e.preventDefault();
+      sessionStorage.setItem("username",username);
+      sessionStorage.setItem("roomCode",code);
       Socket.emit("getWords", code);
       navigate(`/${code}`);
   };
@@ -56,6 +59,8 @@ export default function Login(
       alert("Lmao. Your friends ditched you. Get the fuck outta here")
     })
     Socket.on("userJoined", ()=>{
+      sessionStorage.setItem("username",username);
+      sessionStorage.setItem("roomCode",code);
       Socket.emit("getWords", code);
       navigate(`/${code}`);
     })

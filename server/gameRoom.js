@@ -1,4 +1,3 @@
-import getRandomWords from "./randomWord";
 
 export class GameRoom{
     constructor(server){
