@@ -18,7 +18,7 @@ export default function NumberComboBox({ onChange }) {
           {selectedNumber ?? ""}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="flex gap-2 p-2 w-92">
+      <PopoverContent className="flex gap-2 p-2 w-42 bg-opacity-50">
         {numbers.map((num) => (
           <Button
             key={num}

@@ -8,7 +8,7 @@ export default function Landing() {
         <>
         <div className="flex flex-row justify-between ml-10 mr-10 pt-50">
             <div className="flex flex-col justify-center">
-                <GifComponent/>
+                <GifComponent url="https://media.tenor.com/80aRR2vwzqkAAAAj/cavy-sherlock-detective.gif"/>
                 <TypingAnimation>
                     Codenames...
                 </TypingAnimation>

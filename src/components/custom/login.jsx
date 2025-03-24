@@ -20,7 +20,7 @@ import {
 
 import { useState } from "react"
 import { Socket } from "../../socket"
-import { Link, useNavigate } from "react-router-dom"
+import {useNavigate } from "react-router-dom"
 
 export default function Login(
   className,
@@ -32,36 +32,37 @@ export default function Login(
 
   const handleCreateClick = (e) => {
     // e.preventDefault();
+    console.log(username);
     Socket.emit("createRoom",  username );
     Socket.once("Successfull", ( code ) => {
         setCode(code);
-
         console.log(code);
     });
     setSignupNext(1);
   };  
 
   const handleJoinClick = (e) => {
-      // e.preventDefault();
       sessionStorage.setItem("username",username);
       sessionStorage.setItem("roomCode",code);
-      Socket.emit("getWords", code);
       navigate(`/${code}`);
   };
 
   const joinHandler = (e) => {
     e.preventDefault();
     Socket.emit("joinRoom", code, username);
+    Socket.off("roomError");
     Socket.on("roomError", ()=>{
-      alert("Are you a complete dumbfuck that you can't even copy the code correctly? Or did your friends ditch you?")
+      alert("Are you a complete dumbfuck that you can't even copy the code correctly? Or did your friends ditch you?");
+
     })
+    Socket.off("roomFull")
     Socket.on("roomFull", ()=>{
       alert("Lmao. Your friends ditched you. Get the fuck outta here")
     })
     Socket.on("userJoined", ()=>{
+      console.log(username);
       sessionStorage.setItem("username",username);
       sessionStorage.setItem("roomCode",code);
-      Socket.emit("getWords", code);
       navigate(`/${code}`);
     })
   }
@@ -80,7 +81,6 @@ export default function Login(
         <TabsContent value="Join">
           <Card>
             <CardHeader>
-              {/* Maybe an welcome icon */}
               <CardTitle>Join Game</CardTitle>
               <CardDescription>
                 Enter your Room Id and Username to join the game.
@@ -120,7 +120,6 @@ export default function Login(
           {signupNext == 0 && (
             <Card>
               <CardHeader>
-                {/* Maybe an signup icon */}
                 <CardTitle>Create</CardTitle>
                 <CardDescription>
                   Create a room and invite your friends to play.
@@ -149,12 +148,10 @@ export default function Login(
           {signupNext == 1 && (
             <Card>
               <CardHeader>
-                {/* Maybe an signup icon */}
                 <CardTitle>Room Code</CardTitle>
                 <CardDescription>Share this with your friends</CardDescription>
               </CardHeader>
               <CardContent className="space-y-2">
-                {/* show the room id  */}
                 <div>
                     <h1>{code}</h1>
                 </div>
@@ -174,5 +171,3 @@ export default function Login(
     </div>
   );
 }
-
-// have to a add all the connection logic

@@ -2,13 +2,11 @@ import * as React from "react";
 import { Button } from "../ui/button";
 import {cn} from "../../lib/utils";
 
-export default function TeamBoard(
+export default function TeamBoard({
     className,
+    score,
     children,
-    number,
-) {
-    
-    const [score, setScore] = React.useState(number);
+}) {
 
     return (
         <div className={cn("w-80 bg-gray-100 rounded-lg shadow-lg border border-gray-300 p-4", className)}>

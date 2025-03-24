@@ -9,19 +9,25 @@ import { useState } from 'react'
 export default function CustomInput({
     className,
 }) {
-
-    const [hint, setHint] = useState("")
-    const [number, setNumber] = useState(null)
+    const username = sessionStorage.getItem("username");
+    const code = sessionStorage.getItem("roomCode");
+    const isRed = (sessionStorage.getItem("team")=="Red");
+    const [hint, setHint] = useState("");
+    const [number, setNumber] = useState(null);
     const handleSubmit = (e) =>{
         e.preventDefault();
-        Socket.emit("hint", hint, number);
+        if(hint!="" && number!=null){
+          Socket.emit("hint", hint, number, username, code,isRed);
+        }else{
+          alert("Enter some hint or number please!!!");
+        }
     }
-    // work the server part
+    
 
 
   return (
-    <form onSubmit={handleSubmit} className={cn("flex flex-row gap-2 justify-center", className)}>
-      <Input placeholder="Enter Clue" className={"w-80"} onChange={(e)=>{
+    <form onSubmit={handleSubmit} className={cn("flex flex-row justify-center", className)}>
+      <Input placeholder="Enter Clue" className={"w-40"} onChange={(e)=>{
           setHint(e.target.value);
       }}/>
       <NumberComboBox onChange={(num)=>{

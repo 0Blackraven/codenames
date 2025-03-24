@@ -1,32 +1,21 @@
 import { Server, Socket } from 'socket.io';
+import { Room } from './room.js';
 import { User } from './user.js';
 import getRandomWords from './randomWord.js';
 
-const mapOfWords = new Map();
-const mapOfRooms = new Map();
+const activeRooms = new Map(); 
 
 export class GameManager {
     constructor(server) {
         this.server = server;
-
-        // Periodically delete empty rooms every 10 minutes
+        
         setInterval(() => {
-            mapOfRooms.forEach((users, code) => {
-                if (!users || users.length === 0) {
-                    mapOfRooms.delete(code);
-                    console.log(`Room ${code} deleted due to no users`);
+            for (const [code, room] of activeRooms.entries()) {
+                if (!room.users || room.users.length === 0) {
+                    activeRooms.delete(code); // Remove empty rooms
                 }
-            });
+            }
         }, 10 * 60 * 1000);
-    }
-
-    handleConnection(client) {
-        console.log(`New client connected: ${client.id}`);
-        client.on('reconnect', (code) => this.handleReconnect(client, code));
-        client.on('disconnect', () => this.handleDisconnect(client));
-        client.on('createRoom', (username) => this.createRoom(client, username));
-        client.on('joinRoom', (code, username) => this.joinRoom(client, code, username));
-        client.on('getWords', (code) => this.getWords(client, code));
     }
 
     randomCode() {
@@ -38,129 +27,204 @@ export class GameManager {
             for (let i = 0; i < 6; i++) {
                 code += characters.charAt(Math.floor(Math.random() * characters.length));
             }
-        } while (mapOfRooms.has(code));
+        } while (activeRooms.has(code));
     
         return code;
     }
 
-    randomId(){
-        const number = '0123456789';
-        let id;
-
-        do {
-            id = '';
-            for (let i = 0; i < 4; i++) {
-                id += number.charAt(Math.floor(Math.random() * number.length));
+    handleConnection(client) {
+        client.on('reconnect', (code, username) => {
+            const room = activeRooms.get(code);
+            if (!room) {
+                client.emit("Expired Session");
+                return;
             }
-        } while (this.isIdTaken(id));
-
-        return id;
-    }
-
-    isIdTaken(id) {
-        for (const users of mapOfRooms.values()) {
-            if (users.some(user => user.id === id)) {
-                return true; // ID already exists
+            if (room.users.length >= 14) {
+                client.emit("roomFull");
+                return;
             }
-        }
-        return false; // ID is unique
-    }
-
-    handleReconnect(client, code) {
-        if (!mapOfRooms.has(code)) {
-            client.emit("Expired Session");
-            return; // Fix: Return to prevent further execution
-        }
-
-        const users = mapOfRooms.get(code);
-        if (!users) {
-            client.emit("Expired Session");
-            return;
-        }
-
-        // Check if user already exists in the room
-        const existingUser = users.find(user => user.client.id === client.id);
-
-        if (existingUser) {
-            existingUser.client = client; // Update client reference
-            console.log(`${existingUser.username} reconnected to room ${code}`);
-        } else {
-            const id = this.randomId();
             client.join(code);
-            const roomWords = mapOfWords.get(code);
-            client.emit("words", roomWords);
-            const username = `User-${id}`; // Fix: Assign a username if not found
-            const user = new User(client, client.id, id, username, code);
-            users.push(user);
-            console.log(`${username} rejoined room ${code}`);
-        }
-    }
+            client.emit("reconnectedlogs", room.logs);
+            client.emit("redScore",room.redScore);    
+            client.emit("blueScore",room.blueScore);
+            const user = new User(client, client.id, username, code);
+            room.addUser(user);
+        });
 
-    async createRoom(client, username) {
-        const code = this.randomCode();
-        const id = this.randomId();
-        client.join(code);
-        const user = new User(client, client.id, id, username, code);
-        mapOfRooms.set(code, [user]); 
-        const roomWords = await getRandomWords();
-        mapOfWords.set(code, roomWords);
-        console.log(`Room created with code: ${code}`);
-        client.emit("Successfull", code);
-    }
-
-    getWords(client, code) {
-        const roomWords = mapOfWords.get(code); 
-        client.emit("words", roomWords);
-    }
-
-    joinRoom(client, code, username) {
-        if (!mapOfRooms.has(code)) {
-            client.emit("roomError"); // Room does not exist
-            return;
-        }
-
-        const users = mapOfRooms.get(code);
-        if (!users) {
-            client.emit("roomError"); // Prevent undefined errors
-            return;
-        }
-
-        if (users.length >= 14) {
-            client.emit("roomFull");
-            return;
-        }
-
-        const id = this.randomId();
-        client.join(code);
-        const user = new User(client, client.id, id, username, code);
-        users.push(user);
-        console.log(`${username} joined room ${code}`);
-        client.emit("userJoined");
-    }
-
-    handleDisconnect(client) {
-        console.log(`Client disconnected: ${client.id}`);
-
-        setTimeout(() => {
-            let roomCode = null;
-
-            mapOfRooms.forEach((users, code) => {
-                if (!users) return; // Prevent undefined errors
-
-                const userIndex = users.findIndex(user => user.client.id === client.id);
-                if (userIndex !== -1) {
-                    roomCode = code;
-                    users.splice(userIndex, 1);
-                    console.log(`User ${client.id} removed from room ${code}`);
-
-                    if (users.length === 0) {
-                        console.log(`Room ${code} is now empty, deleting it.`);
-                        mapOfRooms.delete(code);
+        client.on('disconnect', () => {
+            setTimeout(() => {
+                for (const [roomCode, room] of activeRooms.entries()) {
+                    const userIndex = room.users.findIndex(user => user.client.id === client.id);
+                    if (userIndex !== -1) {
+                        room.users.splice(userIndex, 1);
+                        if (room.users.length === 0) {
+                            activeRooms.delete(roomCode);
+                        }
                     }
                 }
-            });
-        }, 30000);
+            }, 2000);
+            client.removeAllListeners();
+        });
 
-        client.removeAllListeners(); // Ensuring no lingering connections
+        client.on('createRoom', async (username) => {
+            const code = this.randomCode();
+            const roomWords = await getRandomWords();
+            client.join(code);
+            const user = new User(client, client.id, username, code);
+            const room = new Room(code, roomWords, 9, 8, "redSpy");
+            room.addUser(user);
+            activeRooms.set(code, room);
+            client.emit("Successfull", code);
+            console.log('words sent');
+        });
+
+        client.on('joinRoom', (code, username) => {
+            const room = activeRooms.get(code);
+            if (!room) {
+                client.emit("roomError");
+                return;
+            }
+            if (room.users.length >= 14) {
+                client.emit("roomFull");
+                return;
+            }
+            client.join(code);
+            const user = new User(client, client.id, username, code);
+            room.addUser(user);
+            client.emit("userJoined");
+            client.emit("words", room.words);
+            console.log('words sent');
+        });
+
+        client.on('getWords', (code) => {
+            const room = activeRooms.get(code);
+            if (room) {
+                client.emit("words", room.words);
+            }
+        });
+        
+        client.on('hint', (hint, number, username, code, isRed) => {
+            const room = activeRooms.get(code);
+            isRed = isRed;
+            if (room) {
+                const notification = `${username}:${hint} related to ${number} words`;
+                room.addlog(notification);
+                this.server.in(code).emit("notification", notification);
+                room.updateGuess(number);
+                (isRed)?room.updateTurn("redOper"):room.updateTurn("blueOper");
+                const turn= room.turn
+                this.server.in(code).emit("turn",turn);
+            }
+        });
+
+        client.on("changeRoleTeam", (code, isRed, isSpy)=>{
+            const room = activeRooms.get(code);
+            const user = room.users.find(user => user.client.id === client.id).username;
+            room.addRole(user, isRed ? "red" : "blue", isSpy ? "spy" : "operative");
+            this.server.in(code).emit("teams", room.redSpy, room.blueSpy, room.redOper, room.blueOper);   
+        });
+
+        client.on("updateWords",(code, isRed, name)=>{
+            const room = activeRooms.get(code);
+            const words = room.words.find(word=> word.name == name);
+            if (words.value === 3) {
+                if (!room.gameOver) {
+                    room.gameOver = true;
+                    this.server.in(code).emit("GameOver", isRed, true);
+                }
+            }            
+            if(words.value == 0){
+                words.isClicked = true
+                room.guessLeft -= 1;
+                if(room.guessLeft==0){
+                    (isRed)?room.updateTurn("blueSpy"):room.updateTurn("redSpy");
+                    const turn= room.turn
+                    this.server.in(code).emit("turn",turn);
+                }
+            }
+            if(words.value == 1 ){
+                if(isRed){
+                    room.redScore -= 1;
+                    if(room.redScore == 0){
+                        room.gameOver = true;
+                        this.server.in(code).emit("GameOver", isRed, false);
+                        return;
+                    }
+                    this.server.in(code).emit("redScore", room.redScore);
+                    room.guessLeft -= 1;
+                    if(room.guessLeft==0){
+                        (isRed)?room.updateTurn("blueSpy"):room.updateTurn("redSpy");
+                        const turn= room.turn
+                        this.server.in(code).emit("turn",turn);
+                    }
+                }else{
+                    room.redScore -= 1;
+                    if(room.redScore == 0){
+                        room.gameOver = true;
+                        this.server.in(code).emit("GameOver", isRed, false);
+                        return;
+                    }
+                    this.server.in(code).emit("redScore", room.redScore);
+                    room.updateGuess(0);
+                    if(room.guessLeft==0){
+                        (isRed)?room.updateTurn("blueSpy"):room.updateTurn("redSpy");
+                        const turn= room.turn
+                        this.server.in(code).emit("turn",turn);
+                    }
+                }
+                words.isClicked = true
+            }
+            if(words.value == 2){
+                if(!isRed){
+                    room.blueScore -= 1;
+                    if(room.blueScore == 0){
+                        room.gameOver=true;
+                        this.server.in(code).emit("GameOver", isRed, false);
+                        return;
+                    }
+                    this.server.in(code).emit("blueScore", room.blueScore);
+                    room.guessLeft -= 1;
+                    if(room.guessLeft==0){
+                        (isRed)?room.updateTurn("blueSpy"):room.updateTurn("redSpy");
+                        const turn= room.turn
+                        this.server.in(code).emit("turn",turn);
+                    }
+                }else{
+                    room.blueScore -= 1;
+                    if(room.blueScore == 0){
+                        room.gameOver=true;
+                        this.server.in(code).emit("GameOver", isRed, false);
+                        return;
+                    }
+                    this.server.in(code).emit("blueScore", room.blueScore);
+                    room.updateGuess(0);
+                    if(room.guessLeft==0){
+                        (isRed)?room.updateTurn("blueSpy"):room.updateTurn("redSpy");
+                        const turn= room.turn
+                        this.server.in(code).emit("turn",turn);
+                    }
+                }
+                words.isClicked = true
+            }
+            client.emit("words", room.words);
+        });
+
+        client.on("getScores",(code)=>{
+            const room = activeRooms.get(code);
+            this.server.in(code).emit("redScore",room.redScore);    
+            this.server.in(code).emit("blueScore",room.blueScore);
+        })
+
+        client.on("getTeams",(code)=>{
+            const room = activeRooms.get(code);
+            this.server.in(code).emit("teams",room.redSpy,room.blueSpy,room.redOper,room.blueOper);    
+        })
+
+        client.on("getTurn",(code)=>{
+            const room = activeRooms.get(code);
+            console.log("turn sent");
+            const turn = room.turn
+            this.server.in(code).emit("turn",turn);
+        })
     }
 }

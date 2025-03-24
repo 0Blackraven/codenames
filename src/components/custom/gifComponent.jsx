@@ -1,7 +1,7 @@
-const GifComponent = () => {
+const GifComponent = ({url}) => {
     return (
       <img
-        src="https://media.tenor.com/80aRR2vwzqkAAAAj/cavy-sherlock-detective.gif"
+        src = {url}
         width="250"
         height="250"
         frameBorder="0.001"

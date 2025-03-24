@@ -11,9 +11,10 @@ async function getRandomWords() {
 
     try {
         const text = await fs.readFile("./words.txt", "utf-8");
-        const words = text.split(/\r?\n/); // Handle different OS line endings
+        const words = text.split(/\r?\n/);
 
         // Define values: 9 red, 8 blue, 7 neutral, 1 black
+        //red value=1 blue value=2 black value=3 neutral value=0
         const values = Array(9).fill(1).concat(Array(8).fill(2)).concat(Array(7).fill(0)).concat([3]);
         shuffleArray(values);
 
@@ -33,8 +34,6 @@ async function getRandomWords() {
                 });
             }
         }
-
-        console.log(resultArray);
         return resultArray;
     } catch (err) {
         console.error("Error reading words file:", err);

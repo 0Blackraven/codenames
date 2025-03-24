@@ -8,7 +8,9 @@ import ThemeButton from './components/custom/themeButton'
 function App() {
   return (
     <Router>
-      <ThemeButton className="absolute top-5 right-5"/>
+      <div>
+        <ThemeButton className="fixed top-5 right-5"/>
+      </div>     
       <Routes>
         <Route path = '/' element = {<Landing/>} /> 
         <Route path = '/:game' element = {<Game/>} />
