@@ -35,6 +35,11 @@ export class GameManager {
     handleConnection(client) {
         client.on('reconnect', (code, username) => {
             const room = activeRooms.get(code);
+            const turn = room.turn;
+            if(room.gameOver){
+                client.emit("gameEnded");
+                return;
+            }
             if (!room) {
                 client.emit("Expired Session");
                 return;
@@ -45,6 +50,8 @@ export class GameManager {
             }
             client.join(code);
             client.emit("reconnectedlogs", room.logs);
+            client.emit("turn",turn);
+            client.emit("teams", room.redSpy, room.blueSpy, room.redOper, room.blueOper);
             client.emit("redScore",room.redScore);    
             client.emit("blueScore",room.blueScore);
             const user = new User(client, client.id, username, code);
@@ -52,18 +59,68 @@ export class GameManager {
         });
 
         client.on('disconnect', () => {
-            setTimeout(() => {
-                for (const [roomCode, room] of activeRooms.entries()) {
-                    const userIndex = room.users.findIndex(user => user.client.id === client.id);
-                    if (userIndex !== -1) {
-                        room.users.splice(userIndex, 1);
+            for (const [roomCode, room] of activeRooms.entries()) {
+                const userIndex = room.users.findIndex(user => user.client.id === client.id);
+                const userName = room.users[userIndex]?.username;
+                const redSpyIndex = room.redSpy.findIndex(spyName => spyName === userName);
+                const blueSpyIndex = room.blueSpy.findIndex(spyName => spyName === userName);
+                const redOperIndex = room.redOper.findIndex(spyName => spyName === userName);
+                const blueOperIndex = room.blueOper.findIndex(spyName => spyName === userName);
+                if (redSpyIndex !== -1) {
+                    room.redSpy.splice(redSpyIndex, 1);
+                    this.server.in(roomCode).emit("teams", room.redSpy, room.blueSpy, room.redOper, room.blueOper);
+                }
+                if (blueSpyIndex !== -1) {
+                    room.blueSpy.splice(blueSpyIndex, 1);
+                    this.server.in(roomCode).emit("teams", room.redSpy, room.blueSpy, room.redOper, room.blueOper);
+                }
+                if (redOperIndex !== -1) {
+                    room.redOper.splice(redOperIndex, 1);
+                    this.server.in(roomCode).emit("teams", room.redSpy, room.blueSpy, room.redOper, room.blueOper);
+                }
+                if (blueOperIndex !== -1) {
+                    room.blueOper.splice(blueOperIndex, 1);
+                    this.server.in(roomCode).emit("teams", room.redSpy, room.blueSpy, room.redOper, room.blueOper);
+                }
+                if (userIndex !== -1) {
+                    room.users.splice(userIndex, 1);
+                    setTimeout(() => {
                         if (room.users.length === 0) {
                             activeRooms.delete(roomCode);
                         }
+                    }, 1000);
                     }
                 }
-            }, 2000);
             client.removeAllListeners();
+        });
+
+        client.on('removeFromRoom', (roomCode) => {
+            const room = activeRooms.get(roomCode);
+            const userIndex = room.users.findIndex(user => user.client.id === client.id);
+            const userName = room.users[userIndex]?.username;
+            const redSpyIndex = room.redSpy.findIndex(spyName => spyName === userName);
+            const blueSpyIndex = room.blueSpy.findIndex(spyName => spyName === userName);
+            const redOperIndex = room.redOper.findIndex(spyName => spyName === userName);
+            const blueOperIndex = room.blueOper.findIndex(spyName => spyName === userName);
+            if (redSpyIndex !== -1) {
+                room.redSpy.splice(redSpyIndex, 1);
+                this.server.in(roomCode).emit("teams", room.redSpy, room.blueSpy, room.redOper, room.blueOper);
+            }
+            if (blueSpyIndex !== -1) {
+                room.blueSpy.splice(blueSpyIndex, 1);
+                this.server.in(roomCode).emit("teams", room.redSpy, room.blueSpy, room.redOper, room.blueOper);
+            }
+            if (redOperIndex !== -1) {
+                room.redOper.splice(redOperIndex, 1);
+                this.server.in(roomCode).emit("teams", room.redSpy, room.blueSpy, room.redOper, room.blueOper);
+            }
+            if (blueOperIndex !== -1) {
+                room.blueOper.splice(blueOperIndex, 1);
+                this.server.in(roomCode).emit("teams", room.redSpy, room.blueSpy, room.redOper, room.blueOper);
+            }
+            if (userIndex !== -1) {
+                room.users.splice(userIndex, 1);
+            }
         });
 
         client.on('createRoom', async (username) => {
@@ -117,11 +174,39 @@ export class GameManager {
             }
         });
 
-        client.on("changeRoleTeam", (code, isRed, isSpy)=>{
+        client.on('endGuess', (code,isRed)=>{
             const room = activeRooms.get(code);
-            const user = room.users.find(user => user.client.id === client.id).username;
+            (isRed)?room.updateTurn("blueSpy"):room.updateTurn("redSpy");
+            const turn= room.turn
+            this.server.in(code).emit("turn",turn);
+        })
+
+        client.on("changeRoleTeam", (roomCode, isRed, isSpy)=>{
+            const room = activeRooms.get(roomCode);
+            const user = room.users.find(user => user.client.id === client.id)?.username;
+            const redSpyIndex = room.redSpy.findIndex(spyName => spyName === user);
+            const blueSpyIndex = room.blueSpy.findIndex(spyName => spyName === user);
+            const redOperIndex = room.redOper.findIndex(spyName => spyName === user);
+            const blueOperIndex = room.blueOper.findIndex(spyName => spyName === user);
+            if (redSpyIndex !== -1) {
+                room.redSpy.splice(redSpyIndex, 1);
+                this.server.in(roomCode).emit("teams", room.redSpy, room.blueSpy, room.redOper, room.blueOper);
+            }
+            if (blueSpyIndex !== -1) {
+                room.blueSpy.splice(blueSpyIndex, 1);
+                this.server.in(roomCode).emit("teams", room.redSpy, room.blueSpy, room.redOper, room.blueOper);
+            }
+            if (redOperIndex !== -1) {
+                room.redOper.splice(redOperIndex, 1);
+                this.server.in(roomCode).emit("teams", room.redSpy, room.blueSpy, room.redOper, room.blueOper);
+            }
+            if (blueOperIndex !== -1) {
+                room.blueOper.splice(blueOperIndex, 1);
+                this.server.in(roomCode).emit("teams", room.redSpy, room.blueSpy, room.redOper, room.blueOper);
+            }
             room.addRole(user, isRed ? "red" : "blue", isSpy ? "spy" : "operative");
-            this.server.in(code).emit("teams", room.redSpy, room.blueSpy, room.redOper, room.blueOper);   
+            this.server.in(roomCode).emit("teams", room.redSpy, room.blueSpy, room.redOper, room.blueOper);
+            client.emit("UpdateRole", isRed, isSpy);
         });
 
         client.on("updateWords",(code, isRed, name)=>{
@@ -131,6 +216,7 @@ export class GameManager {
                 if (!room.gameOver) {
                     room.gameOver = true;
                     this.server.in(code).emit("GameOver", isRed, true);
+                    activeRooms.delete(code);
                 }
             }            
             if(words.value == 0){
@@ -143,11 +229,13 @@ export class GameManager {
                 }
             }
             if(words.value == 1 ){
+                words.isClicked = true;
                 if(isRed){
                     room.redScore -= 1;
                     if(room.redScore == 0){
                         room.gameOver = true;
                         this.server.in(code).emit("GameOver", isRed, false);
+                        activeRooms.delete(code);
                         return;
                     }
                     this.server.in(code).emit("redScore", room.redScore);
@@ -162,6 +250,7 @@ export class GameManager {
                     if(room.redScore == 0){
                         room.gameOver = true;
                         this.server.in(code).emit("GameOver", isRed, false);
+                        activeRooms.delete(code);
                         return;
                     }
                     this.server.in(code).emit("redScore", room.redScore);
@@ -172,14 +261,15 @@ export class GameManager {
                         this.server.in(code).emit("turn",turn);
                     }
                 }
-                words.isClicked = true
             }
             if(words.value == 2){
+                words.isClicked = true;
                 if(!isRed){
                     room.blueScore -= 1;
                     if(room.blueScore == 0){
                         room.gameOver=true;
                         this.server.in(code).emit("GameOver", isRed, false);
+                        activeRooms.delete(code);
                         return;
                     }
                     this.server.in(code).emit("blueScore", room.blueScore);
@@ -194,6 +284,7 @@ export class GameManager {
                     if(room.blueScore == 0){
                         room.gameOver=true;
                         this.server.in(code).emit("GameOver", isRed, false);
+                        activeRooms.delete(code);
                         return;
                     }
                     this.server.in(code).emit("blueScore", room.blueScore);
@@ -204,15 +295,38 @@ export class GameManager {
                         this.server.in(code).emit("turn",turn);
                     }
                 }
-                words.isClicked = true
             }
-            client.emit("words", room.words);
+            this.server.in(code).emit("words", room.words);
+            console.log("am here")
         });
 
         client.on("getScores",(code)=>{
             const room = activeRooms.get(code);
-            this.server.in(code).emit("redScore",room.redScore);    
+            const redScore = room?.redScore;
+            const blueScore = room?.blueScore;
+            this.server.in(code).emit("redScore",redScore);   
+            this.server.in(code).emit("blueScore",blueScore);
+        })
+
+        client.on('resetWords', async (code)=>{
+            const room = activeRooms.get(code);
+            if(room.wordsChanged==true){
+                this.server.in(code).emit("justChangedWords");
+                return;
+            }
+            room.words = await getRandomWords();
+            room.wordsChanged = true;
+            room.redScore = 9;
+            room.blueScore = 8;
+            room.turn = "redSpy";
+            room.guessLeft = 0;
+            this.server.in(code).emit("redScore",room.redScore);
             this.server.in(code).emit("blueScore",room.blueScore);
+            this.server.in(code).emit("turn",room.turn);
+            this.server.in(code).emit("words", room.words);
+            setTimeout(()=>{
+                room.wordsChanged = false;
+            }, 10 * 1000);
         })
 
         client.on("getTeams",(code)=>{
@@ -222,8 +336,7 @@ export class GameManager {
 
         client.on("getTurn",(code)=>{
             const room = activeRooms.get(code);
-            console.log("turn sent");
-            const turn = room.turn
+            const turn = room?.turn
             this.server.in(code).emit("turn",turn);
         })
     }

@@ -13,6 +13,7 @@ export class Room {
         this.redOper = [];
         this.blueOper = [];
         this.users = [];
+        this.wordChanged = false;
     }
 
     addUser(user){
