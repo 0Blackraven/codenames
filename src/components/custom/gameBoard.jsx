@@ -7,7 +7,9 @@ import clsx from "clsx"
 
 export default function GameBoard({
   className,
-  turn
+  turn,
+  redScore,
+  blueScore,
 }) {
   const colorMap = {
     0: "text-gray-500",
@@ -22,12 +24,12 @@ export default function GameBoard({
 
   useEffect(() => {
     Socket.on("words", (roomWords) => {
+      console.log("am here");
       setWords(roomWords);
     });
-  }, []);
+  }, [redScore, blueScore,words,turn]);
 
   const handleWordClicked = (name) => {
-    console.log(turn);
     if (isSpy) {
         console.log("Blocked: Spymaster cannot click");
         return;
@@ -36,7 +38,6 @@ export default function GameBoard({
         console.log("Blocked: Not your turn");
         return
       }
-    console.log(`Word clicked: ${name}`);
     Socket.emit("updateWords", code, isRed, name);
 };
   

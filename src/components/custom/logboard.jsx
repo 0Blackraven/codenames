@@ -46,7 +46,7 @@ export function Logboard({ className }) {
       Socket.off("reconnectedlogs", handleReconnectedLogs);
       Socket.off("notification", handleNotification);
     };
-  }, []); // Empty dependency array ensures this runs only once
+  }, [notifications]); // Empty dependency array ensures this runs only once
 
   return (
     <div className="flex flex-col justify-center items-center border-2 border-gray-200 rounded-lg mx-auto">

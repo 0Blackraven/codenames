@@ -1,6 +1,8 @@
 import Login from "@/components/custom/login";
 import { TypingAnimation } from "../components/magicui/typing-animation";
 import GifComponent from "@/components/custom/gifComponent";
+import { useEffect } from "react";
+import { Socket } from "../socket"
 
 
 export default function Landing() {
@@ -12,7 +14,7 @@ export default function Landing() {
                 <TypingAnimation>
                     Codenames...
                 </TypingAnimation>
-                <TypingAnimation className="text-1.5xl" delay={1000}>
+                <TypingAnimation className="text-1.5xl" delay={400}>
                     Guess the word and Hope it’s not your last.
                 </TypingAnimation>
             </div>

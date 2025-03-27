@@ -15,10 +15,10 @@ export default function Game(){
     const [msg,setMsg]= useState("");
     const [username, setUsername] = useState("");
     const [won, setWon] = useState(false);
-    const [isRed, setIsRed] = useState(false || (sessionStorage.getItem("team")=="Red"));
-    const [isBlue, setIsBlue] = useState(false || (sessionStorage.getItem("team")=="Blue"));
-    const [isSpymaster, setIsSpymaster] = useState(false || (sessionStorage.getItem("role")=="Spymaster"));
-    const [isOperative, setIsOperative] = useState(false || (sessionStorage.getItem("role")=="Operative"));
+    const [isRed, setIsRed] = useState(() => sessionStorage.getItem("team") === "Red");
+    const [isBlue, setIsBlue] = useState(() => sessionStorage.getItem("team") === "Blue");
+    const [isSpymaster, setIsSpymaster] = useState(() => sessionStorage.getItem("role") === "Spymaster");
+    const [isOperative, setIsOperative] = useState(() => sessionStorage.getItem("role") === "Operative");
     const [redScore, setRedScore]= useState(0);
     const [blueScore, setBlueScore] = useState(0);
     const [winTeam, setWinTeam] = useState("");
@@ -34,7 +34,6 @@ export default function Game(){
         
         Socket.emit("getWords", code);
         Socket.emit("getScores",code);
-        Socket.emit("getTeam",code);
         setUsername(sessionStorage.getItem("username"));
 
         Socket.on("redScore",(score)=>{
@@ -49,23 +48,26 @@ export default function Game(){
             (isBlack)
             ?(isRed)?setWinTeam("BLUE"):setWinTeam("RED")
             :(isRed)?setWinTeam("RED"):setWinTeam("BLUE")
-            setTimeout(()=>{
-                Socket.emit("disconnect");
-                navigate(`/`);
-            },20 * 1000);
         })
 
+        Socket.on("UpdateRole",(isRed,isSpy)=>{
+            setIsRed(isRed);
+            setIsBlue(!isRed);
+            setIsOperative(!isSpy);
+            setIsSpymaster(isSpy);
+            console.log(isRed,isBlue,isOperative,isSpymaster);
+        });
+    },[])
+
+    useEffect(()=>{
+        Socket.emit("getTeam",code);
         Socket.on("teams", (redSpy, blueSpy, redOper, blueOper) => {
             setRedSpy(redSpy);
             setBlueSpy(blueSpy);
             setRedOper(redOper);
             setBlueOper(blueOper);
         });
-    },[])
-
-    useEffect(()=>{
-        console.log(`current turn: ${turn}`);
-    },[turn])
+    },[redSpy, blueSpy, redOper, blueOper]);
 
     useEffect(()=>{
         Socket.emit("getTurn",code);
@@ -146,11 +148,21 @@ export default function Game(){
         Socket.emit("changeRoleTeam",code, false, false);
     }
 
+    const endGuess=(code,isRed)=>{
+        Socket.emit("endGuess",code,isRed);
+    }
+
     return(
         (!won)
         ?(<>
             <div className="flex items-start ">    
-                <UserDropDown className="w-12 h-12">{username}</UserDropDown>
+                <UserDropDown 
+                    className="w-12 h-12"
+                    children={username}
+                    isRed={isRed}
+                    isBlue={isBlue}
+                    isSpy={isSpymaster}
+                    isOper={isOperative}></UserDropDown>
             </div>
             <div className="flex flex-row gap-4">
                 <TeamBoard score={redScore}>
@@ -172,12 +184,15 @@ export default function Game(){
                 </div>
                 </TeamBoard>
                 <div className="flex flex-col gap-4">
-                    <GameBoard turn={turn} />
+                    <GameBoard 
+                        turn={turn} 
+                        redScore={redScore}
+                        blueScore={blueScore}/>
                     {!turn ? (<div>{msg}</div>
                          ) : (
                                 <>
                                     {turnSpy && <CustomInput />}
-                                    {turnOper && <Button>End Guess</Button>}
+                                    {turnOper && <Button onClick={()=>endGuess(code,isRed)}>End Guess</Button>}
                                 </>
                     )}
                     <Logboard/>
@@ -203,10 +218,11 @@ export default function Game(){
             </div>
          </>)
         :(<>
-            <div className='flex flex-col items-center justify-center gap-4'>
-                <h1> GAME OVER </h1>
+            <div className='flex flex-col items-center pt-50 justify-center gap-4'>
+                <h1 className='text-4xl'> GAME OVER </h1>
                 <GifComponent url = "https://media.tenor.com/2tBAupuWcMYAAAAj/%E5%A4%A9%E7%AB%BA%E9%BC%A0%E6%A3%AE%E6%A3%AE-%E8%B7%B3%E8%88%9E.gif"/>
-                <h1>{winTeam} HAS WON THE GAME</h1>
+                <h1 className='text-2xl'>{winTeam} HAS WON THE GAME</h1>
+                <Button onClick={()=>navigate("/")}>Back to Home</Button>
             </div>
          </>)
     )

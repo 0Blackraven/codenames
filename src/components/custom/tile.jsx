@@ -6,7 +6,7 @@ export default function Tile({ children , className , onClick}) {
     <div
       onClick={onClick} 
       className={cn("flex flex-col justify-between w-[10vw] h-[10vw] max-w-[100px] max-h-[100px] bg-gray-100 rounded-lg shadow-lg border border-gray-300 p-[1px]",className)}>
-        <div className="text-center text-[8px] font-bold">{children}</div>
+        <div className="text-center text-[15px] font-bold overflow">{children}</div>
     </div>
   );
 }

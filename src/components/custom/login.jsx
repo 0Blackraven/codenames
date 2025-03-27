@@ -32,6 +32,12 @@ export default function Login(
 
   const handleCreateClick = (e) => {
     // e.preventDefault();
+    if(sessionStorage.getItem("roomCode")){
+      Socket.emit("removeFromRoom",sessionStorage.getItem("roomCode"));
+      sessionStorage.removeItem("roomCode");
+      sessionStorage.removeItem("role");
+      sessionStorage.removeItem("team");
+    }
     console.log(username);
     Socket.emit("createRoom",  username );
     Socket.once("Successfull", ( code ) => {
@@ -49,6 +55,12 @@ export default function Login(
 
   const joinHandler = (e) => {
     e.preventDefault();
+    if(sessionStorage.getItem("roomCode")){
+      Socket.emit("removeFromRoom",sessionStorage.getItem("roomCode"));
+      sessionStorage.removeItem("roomCode");
+      sessionStorage.removeItem("role");
+      sessionStorage.removeItem("team");
+    }
     Socket.emit("joinRoom", code, username);
     Socket.off("roomError");
     Socket.on("roomError", ()=>{
@@ -90,6 +102,7 @@ export default function Login(
               <div className="space-y-1">
                 <Label htmlFor="username">Username</Label>
                 <Input 
+                  required
                   id="username" 
                   type="text" 
                   placeholder="habibi"
@@ -99,6 +112,7 @@ export default function Login(
               <div className="space-y-1">
                 <Label htmlFor="roomid">Room Id</Label>
                 <Input 
+                  required
                   id="roomid"  
                   placeholder="12345"
                   value={code}
@@ -129,6 +143,7 @@ export default function Login(
                 <div className="space-y-1">
                   <Label htmlFor="username">Username</Label>
                   <Input 
+                    required
                     id="username" 
                     type="text" 
                     placeholder="habibi"
