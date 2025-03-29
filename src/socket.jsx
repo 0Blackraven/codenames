@@ -7,6 +7,13 @@ Socket.on("gameEnded",()=>{
     alert("Game has already ended");
 })
 
+Socket.on("RoomError",()=>{
+    const navigate = useNavigate()
+    alert("Ur room has expired or does not exist");
+    sessionStorage.removeItem("roomCode")
+    navigate("/");
+})
+
 Socket.on("connect",()=>{
     let code = sessionStorage.getItem("roomCode")
     let username = sessionStorage.getItem("username")

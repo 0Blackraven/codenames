@@ -154,8 +154,8 @@ export default function Game(){
 
     return(
         (!won)
-        ?(<>
-            <div className="flex items-start ">    
+        ?(<div className="flex flex-col justify-center ml-35 mr-35">
+            <div className="flex items-start justify-end ">    
                 <UserDropDown 
                     className="w-12 h-12"
                     children={username}
@@ -164,7 +164,7 @@ export default function Game(){
                     isSpy={isSpymaster}
                     isOper={isOperative}></UserDropDown>
             </div>
-            <div className="flex flex-row gap-4">
+            <div className="flex flex-row flex-grow gap-4 h-[85dvh] w-[85dvw]">
                 <TeamBoard score={redScore}>
                 <div className="flex flex-col gap-2">
                 <h4>SPYMASTER</h4>
@@ -183,7 +183,7 @@ export default function Game(){
                 </div>
                 </div>
                 </TeamBoard>
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col flex-grow gap-4">
                     <GameBoard 
                         turn={turn} 
                         redScore={redScore}
@@ -216,7 +216,7 @@ export default function Game(){
                 </div>
                 </TeamBoard>
             </div>
-         </>)
+         </div>)
         :(<>
             <div className='flex flex-col items-center pt-50 justify-center gap-4'>
                 <h1 className='text-4xl'> GAME OVER </h1>

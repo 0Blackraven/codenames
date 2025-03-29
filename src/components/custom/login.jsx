@@ -21,6 +21,7 @@ import {
 import { useState } from "react"
 import { Socket } from "../../socket"
 import {useNavigate } from "react-router-dom"
+import  CopyToClipBoard  from "./copyToClipBoard"
 
 export default function Login(
   className,
@@ -167,8 +168,9 @@ export default function Login(
                 <CardDescription>Share this with your friends</CardDescription>
               </CardHeader>
               <CardContent className="space-y-2">
-                <div>
+                <div className="flex flex-row items-center justify-center gap-2">
                     <h1>{code}</h1>
+                    <CopyToClipBoard text={code}/>
                 </div>
               </CardContent>
               <CardFooter className= "justify-center">

@@ -8,13 +8,13 @@ import { Socket } from "../socket"
 export default function Landing() {
     return (
         <>
-        <div className="flex flex-row justify-between ml-10 mr-10 pt-50">
-            <div className="flex flex-col justify-center">
+        <div className="flex lg:flex-row justify-between items-center gap-10 flex-col ml-35 mr-35 lg:pt-50">
+            <div className="flex flex-col items- center justify-center">
                 <GifComponent url="https://media.tenor.com/80aRR2vwzqkAAAAj/cavy-sherlock-detective.gif"/>
                 <TypingAnimation>
                     Codenames...
                 </TypingAnimation>
-                <TypingAnimation className="text-1.5xl" delay={400}>
+                <TypingAnimation className="lg:text-xl text-sm" delay={400}>
                     Guess the word and Hope it’s not your last.
                 </TypingAnimation>
             </div>

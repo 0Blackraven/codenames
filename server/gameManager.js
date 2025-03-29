@@ -96,6 +96,10 @@ export class GameManager {
 
         client.on('removeFromRoom', (roomCode) => {
             const room = activeRooms.get(roomCode);
+            if(!room){
+                client.emit("RoomError");
+                return;
+            }
             const userIndex = room.users.findIndex(user => user.client.id === client.id);
             const userName = room.users[userIndex]?.username;
             const redSpyIndex = room.redSpy.findIndex(spyName => spyName === userName);
@@ -155,6 +159,10 @@ export class GameManager {
 
         client.on('getWords', (code) => {
             const room = activeRooms.get(code);
+            if(!room){
+                client.emit("RoomError");
+                return;
+            }
             if (room) {
                 client.emit("words", room.words);
             }
@@ -162,6 +170,10 @@ export class GameManager {
         
         client.on('hint', (hint, number, username, code, isRed) => {
             const room = activeRooms.get(code);
+            if(!room){
+                client.emit("RoomError");
+                return;
+            }
             isRed = isRed;
             if (room) {
                 const notification = `${username}:${hint} related to ${number} words`;
@@ -176,6 +188,10 @@ export class GameManager {
 
         client.on('endGuess', (code,isRed)=>{
             const room = activeRooms.get(code);
+            if(!room){
+                client.emit("RoomError");
+                return;
+            }
             (isRed)?room.updateTurn("blueSpy"):room.updateTurn("redSpy");
             const turn= room.turn
             this.server.in(code).emit("turn",turn);
@@ -183,6 +199,10 @@ export class GameManager {
 
         client.on("changeRoleTeam", (roomCode, isRed, isSpy)=>{
             const room = activeRooms.get(roomCode);
+            if(!room){
+                client.emit("RoomError");
+                return;
+            }
             const user = room.users.find(user => user.client.id === client.id)?.username;
             const redSpyIndex = room.redSpy.findIndex(spyName => spyName === user);
             const blueSpyIndex = room.blueSpy.findIndex(spyName => spyName === user);
@@ -211,6 +231,10 @@ export class GameManager {
 
         client.on("updateWords",(code, isRed, name)=>{
             const room = activeRooms.get(code);
+            if(!room){
+                client.emit("RoomError");
+                return;
+            }
             const words = room.words.find(word=> word.name == name);
             if (words.value === 3) {
                 if (!room.gameOver) {
@@ -302,14 +326,22 @@ export class GameManager {
 
         client.on("getScores",(code)=>{
             const room = activeRooms.get(code);
-            const redScore = room?.redScore;
-            const blueScore = room?.blueScore;
+            if(!room){
+                client.emit("RoomError");
+                return;
+            }
+            const redScore = room.redScore;
+            const blueScore = room.blueScore;
             this.server.in(code).emit("redScore",redScore);   
             this.server.in(code).emit("blueScore",blueScore);
         })
 
         client.on('resetWords', async (code)=>{
             const room = activeRooms.get(code);
+            if(!room){
+                client.emit("RoomError");
+                return;
+            }
             if(room.wordsChanged==true){
                 this.server.in(code).emit("justChangedWords");
                 return;
@@ -331,11 +363,19 @@ export class GameManager {
 
         client.on("getTeams",(code)=>{
             const room = activeRooms.get(code);
+            if(!room){
+                client.emit("RoomError");
+                return;
+            }
             this.server.in(code).emit("teams",room.redSpy,room.blueSpy,room.redOper,room.blueOper);    
         })
 
         client.on("getTurn",(code)=>{
             const room = activeRooms.get(code);
+            if(!room){
+                client.emit("RoomError");
+                return;
+            }
             const turn = room?.turn
             this.server.in(code).emit("turn",turn);
         })
