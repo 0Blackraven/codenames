@@ -154,8 +154,8 @@ export default function Game(){
 
     return(
         (!won)
-        ?(<div className="flex flex-col justify-center ml-35 mr-35">
-            <div className="flex items-start justify-end ">    
+        ?(<div className="flex flex-col justify-center w-full">
+            <div className="flex items-start justify-end mr-20">    
                 <UserDropDown 
                     className="w-12 h-12"
                     children={username}
@@ -164,53 +164,55 @@ export default function Game(){
                     isSpy={isSpymaster}
                     isOper={isOperative}></UserDropDown>
             </div>
-            <div className="flex flex-row flex-grow gap-4 h-[85dvh] w-[85dvw]">
-                <TeamBoard score={redScore}>
-                <div className="flex flex-col gap-2">
-                <h4>SPYMASTER</h4>
-                {!isRed && !isBlue && !isSpymaster && (<Button onClick={redSpyHandler}>Join As SpyMaster</Button>)}
+            <div className="grid grid-cols-[repeat(5,1fr)] lg:grid-rows-[repeat(2,1fr)] grid-rows-[repeat(2,1fr)] p-1">
+                <TeamBoard score={redScore} className="col-span-1 col-start-1 row-start-2 lg:row-start-1 row-span-1 lg:row-span-2 h-full text-red-500">
                 <div>
-                    {redSpy.map((spy, index)=>(
-                        <div key={index}>{spy}</div>
-                    ))}
+                    <h4 className='font-bold'>SPYMASTER</h4>
+                    {!isRed && !isBlue && !isSpymaster && (<Button onClick={redSpyHandler}className="text-[10px] lg:text-[15px]">Join As SpyMaster</Button>)}
+                    <div>
+                        {redSpy.map((spy, index)=>(
+                            <div className="text-black" key={index}>{spy}</div>
+                        ))}
+                    </div>
+                    <h4 className='font-bold'>OPERATIVES</h4>
+                    {!isRed && !isBlue && !isOperative && (<Button onClick={redOperHandler}className="text-[10px] lg:text-[15px]">Join As Operative</Button>)}
+                    <div>
+                        {redOper.map((spy, index)=>(
+                            <div className="text-black" key={index}>{spy}</div>
+                        ))}
+                    </div>
                 </div>
-                <h4>OPERATIVES</h4>
-                {!isRed && !isBlue && !isOperative && (<Button onClick={redOperHandler}>Join As Operative</Button>)}
-                <div>
-                    {redOper.map((spy, index)=>(
-                        <div key={index}>{spy}</div>
-                    ))}
-                </div>
-                </div>
-                </TeamBoard>
-                <div className="flex flex-col flex-grow gap-4">
+                </TeamBoard >
+                <div className="col-span-5 lg:col-span-3 col-start-1 lg:col-start-2 row-start-1 row-span-1 lg:p-4 pb-2">
                     <GameBoard 
                         turn={turn} 
                         redScore={redScore}
                         blueScore={blueScore}/>
-                    {!turn ? (<div>{msg}</div>
-                         ) : (
-                                <>
-                                    {turnSpy && <CustomInput />}
-                                    {turnOper && <Button onClick={()=>endGuess(code,isRed)}>End Guess</Button>}
-                                </>
-                    )}
-                    <Logboard/>
                 </div>
-                <TeamBoard score={blueScore}>
-                <div className='flex flex-col gap-2'>
-                    <h4>SPYMASTER</h4>
-                    {!isRed && !isBlue && !isSpymaster && (<Button onClick={blueSpyHandler}>Join As SpyMaster</Button>)}
+                <div className='col-span-3 col-start-2 row-start-2 row-span-1 p-4'>
+                    {!turn ? (<div  className="p-2">{msg}</div>
+                        ) : (
+                            <>
+                                {turnSpy && <CustomInput className="p-2"/>}
+                                {turnOper && <Button onClick={()=>endGuess(code,isRed)} className="mb-2">End Guess</Button>}
+                            </>
+                    )}
+                    <Logboard className="min-h-[50%] max-h-full"/>
+                </div>
+                <TeamBoard score={blueScore} className="col-span-1 col-start-5 row-start-2 lg:row-start-1 row-span-1 lg:row-span-2 h-full text-blue-500">
+                <div>
+                    <h4 className='font-bold'>SPYMASTER</h4>
+                    {!isRed && !isBlue && !isSpymaster && (<Button onClick={blueSpyHandler}className="text-[10px] lg:text-[15px]">Join As SpyMaster</Button>)}
                     <div>
                         {blueSpy.map((spy, index)=>(
-                            <div key={index}>{spy}</div>
+                            <div className="text-black" key={index}>{spy}</div>
                         ))}
                     </div>
-                    <h4>OPERATIVES</h4>
-                    {!isRed && !isBlue && !isOperative && (<Button onClick={blueOperHandler}>Join As Operative</Button>)}
+                    <h4 className='font-bold'>OPERATIVES</h4>
+                    {!isRed && !isBlue && !isOperative && (<Button onClick={blueOperHandler}className="text-[10px] lg:text-[15px]">Join As Operative</Button>)}
                     <div>
                         {blueOper.map((spy, index)=>(
-                            <div key={index}>{spy}</div>
+                            <div className="text-black" key={index}>{spy}</div>
                         ))}
                     </div>
                 </div>

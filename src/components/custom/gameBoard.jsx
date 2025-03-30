@@ -12,10 +12,10 @@ export default function GameBoard({
   blueScore,
 }) {
   const colorMap = {
-    0: "text-gray-500",
+    0: "text-[#ffb703]",
     1: "text-red-500",
     2: "text-blue-500",
-    3: "text-green-500"
+    3: "text-black"
   };
   const code = sessionStorage.getItem("roomCode");
   const [words, setWords] = useState([]);
@@ -43,7 +43,7 @@ export default function GameBoard({
   
   //red value=1 blue value=2 black value=3 neutral value=0
   return (
-    <div className={cn("grid grid-cols-5 grid-rows-5 mx-auto",className)}>
+    <div className={cn("grid grid-cols-[repeat(5,1fr)] grid-rows-[repeat(5,1fr)] gap-1",className)}>
       {words.map((wordObj, index) => (
         <Tile 
           key={index}

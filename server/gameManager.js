@@ -176,7 +176,7 @@ export class GameManager {
             }
             isRed = isRed;
             if (room) {
-                const notification = `${username}:${hint} related to ${number} words`;
+                const notification = `${username}:${hint}*${number}`;
                 room.addlog(notification);
                 this.server.in(code).emit("notification", notification);
                 room.updateGuess(number);

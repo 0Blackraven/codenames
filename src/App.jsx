@@ -9,7 +9,7 @@ function App() {
   return (
     <Router>
       <div>
-        <ThemeButton className="fixed top-5 right-5"/>
+        <ThemeButton className="fixed top-5 right-9"/>
       </div>     
       <Routes>
         <Route path = '/' element = {<Landing/>} /> 

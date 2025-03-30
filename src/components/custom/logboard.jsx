@@ -49,14 +49,14 @@ export function Logboard({ className }) {
   }, [notifications]); // Empty dependency array ensures this runs only once
 
   return (
-    <div className="flex flex-col justify-center items-center border-2 border-gray-200 rounded-lg mx-auto">
-      <div className={cn("relative flex flex-col overflow-hidden", className)}>
+    <div className={cn("justify-center items-center border-2 border-gray-200 rounded-lg mx-auto",className)}>
+      <div className={cn("overflow-hidden", className)}>
         <AnimatedList>
           {notifications.map((item, idx) => (
             <Notification {...item} key={idx} />
           ))}
         </AnimatedList>
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-background"></div>
+        {/* <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-t from-background"></div> */}
       </div>
     </div>
   );
