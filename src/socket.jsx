@@ -18,10 +18,12 @@ Socket.on("connect",()=>{
     let code = sessionStorage.getItem("roomCode")
     let username = sessionStorage.getItem("username")
     if(code!=null){
-        const isRed = sessionStorage.getItem("team")=="Red";
-        const isSpy= sessionStorage.getItem("role")=="Spymaster";
         Socket.emit("reconnect",code,username);
-        Socket.emit("changeRoleTeam",code, isRed, isSpy);
+        if(sessionStorage.getItem("team")){
+            const isRed = sessionStorage.getItem("team")=="Red";
+            const isSpy= sessionStorage.getItem("role")=="Spymaster";
+            Socket.emit("changeRoleTeam",code, isRed, isSpy);
+        }
         Socket.on("Expired Session",()=>{
         navigate('/');
     })

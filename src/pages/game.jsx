@@ -3,11 +3,19 @@ import GameBoard from '@/components/custom/gameBoard';
 import CustomInput from '@/components/custom/customInput';
 import { Logboard } from '@/components/custom/logboard';
 import TeamBoard from '@/components/custom/teamBoard';
-import UserDropDown from '@/components/custom/userDropDown';
 import { Button } from '@/components/ui/button';
 import { Socket } from '@/socket';
 import {useNavigate } from "react-router-dom";
 import GifComponent from '@/components/custom/gifComponent';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+  } from "@/components/ui/dropdown-menu"
 
 export default function Game(){
     const code = sessionStorage.getItem("roomCode");
@@ -156,13 +164,35 @@ export default function Game(){
         (!won)
         ?(<div className="flex flex-col justify-center w-full">
             <div className="flex items-start justify-end mr-20">    
-                <UserDropDown 
-                    className="w-12 h-12"
-                    children={username}
-                    isRed={isRed}
-                    isBlue={isBlue}
-                    isSpy={isSpymaster}
-                    isOper={isOperative}></UserDropDown>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="outline">{username}</Button>
+                    </DropdownMenuTrigger>
+                <DropdownMenuContent >
+                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                    <DropdownMenuItem>
+                        <Button className="rounded-lg" onClick={()=>{resetWords(code)}}>Reset Words</Button>
+                    </DropdownMenuItem>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+                <DropdownMenuGroup>
+                    <DropdownMenuItem>
+                        {(!isRed || !isSpymaster) && <Button className="rounded-lg" onClick={redSpyHandler}>TURN TO RED SPYMASTER</Button>}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                        {(!isBlue || !isSpymaster) && <Button className="rounded-lg" onClick={blueSpyHandler}>TURN TO BLUE SPYMASTER</Button>}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                        {(!isRed || !isOperative) && <Button className="rounded-lg" onClick={redOperHandler}>TURN TO RED OPERATIVE</Button>}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                        {(!isBlue || !isOperative) && <Button className="rounded-lg" onClick={blueOperHandler}>TURN TO BLUE OPERATIVE</Button>}
+                    </DropdownMenuItem>
+                </DropdownMenuGroup>
+                </DropdownMenuContent>
+                </DropdownMenu>
             </div>
             <div className="grid grid-cols-[repeat(5,1fr)] lg:grid-rows-[repeat(2,1fr)] grid-rows-[repeat(2,1fr)] p-1">
                 <TeamBoard score={redScore} className="col-span-1 col-start-1 row-start-2 lg:row-start-1 row-span-1 lg:row-span-2 h-full text-red-500">
