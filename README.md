@@ -1,12 +1,9 @@
-# React + Vite
+# ABOUT :
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+    This repository hosts a web-based version of Codenames, designed for an interactive and engaging multiplayer experience. It features real-time gameplay, managing team roles, word selection, score tracking, and turn-based play 
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## TECH USED :
+    - Node.js (for signaling server)
+    - Express.js (for server-side routing)
+    - Socket.io (for real-time communication)
+    - React/Tailwind (for frontend)
