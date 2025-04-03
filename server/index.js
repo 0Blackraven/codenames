@@ -2,13 +2,25 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { GameManager } from './gameManager.js'
+import  cors  from 'cors';
 
-const PORT = Number(process.env.PORT) || 8080;
-const BACKEND_URL = 'http://localhost';
+const PORT = process.env.PORT || 8080;
 const app = express();
+
+app.use(cors({
+    origin: "*", 
+    methods: ["GET", "POST"],
+    credentials: true
+}));
+
 const httpServer = createServer(app);
+
 const io = new Server(httpServer, {
-    cors: { origin: "*" },
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"],
+        credentials: true
+    }
 });
 
 const gameManager = new GameManager(io);
@@ -29,5 +41,5 @@ io.engine.on('connection_error', (err) => {
 });
 
 httpServer.listen(PORT, () => {
-    console.log(`Server Running on ${BACKEND_URL}:${PORT}`);
+    console.log(`Server Running on :${PORT}`);
 });
