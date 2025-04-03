@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button } from '../ui/button';
-import { cn } from '@/lib/utils';
+import { cn } from '../../lib/utils';
 import { Moon, Sun } from 'lucide-react';
 
 export default function ThemeButton({

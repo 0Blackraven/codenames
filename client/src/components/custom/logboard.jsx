@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 import { AnimatedList } from "../magicui/animated-list";
 import { Socket } from "../../socket";
 

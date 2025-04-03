@@ -1,12 +1,12 @@
 import {useEffect, useState} from 'react';
-import GameBoard from '@/components/custom/gameBoard';
-import CustomInput from '@/components/custom/customInput';
-import { Logboard } from '@/components/custom/logboard';
-import TeamBoard from '@/components/custom/teamBoard';
-import { Button } from '@/components/ui/button';
-import { Socket } from '@/socket';
+import GameBoard from '../components/custom/gameBoard';
+import CustomInput from '../components/custom/customInput';
+import { Logboard } from '../components/custom/logboard';
+import TeamBoard from '../components/custom/teamBoard';
+import { Button } from '../components/ui/button';
+import { Socket } from '../socket';
 import {useNavigate } from "react-router-dom";
-import GifComponent from '@/components/custom/gifComponent';
+import GifComponent from '../components/custom/gifComponent';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -15,7 +15,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-  } from "@/components/ui/dropdown-menu"
+  } from "../components/ui/dropdown-menu"
 
 export default function Game(){
     const code = sessionStorage.getItem("roomCode");

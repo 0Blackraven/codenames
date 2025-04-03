@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import './App.css'
 import Landing from './pages/landing'
 import Game from './pages/game'

@@ -136,7 +136,6 @@ export class GameManager {
             room.addUser(user);
             activeRooms.set(code, room);
             client.emit("Successfull", code);
-            console.log('words sent');
         });
 
         client.on('joinRoom', (code, username) => {
@@ -154,7 +153,6 @@ export class GameManager {
             room.addUser(user);
             client.emit("userJoined");
             client.emit("words", room.words);
-            console.log('words sent');
         });
 
         client.on('getWords', (code) => {
@@ -321,7 +319,6 @@ export class GameManager {
                 }
             }
             this.server.in(code).emit("words", room.words);
-            console.log("am here")
         });
 
         client.on("getScores",(code)=>{

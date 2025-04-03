@@ -1,5 +1,5 @@
 import * as React from "react";
-import Tile from "./Tile";
+import Tile from "./tile";
 import { Socket } from "../../socket";
 import { useEffect, useState } from "react";
 import { cn } from "../../lib/utils"

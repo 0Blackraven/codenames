@@ -2,8 +2,8 @@ import NumberComboBox from '../ui/com'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { ChevronRight } from "lucide-react"
-import { cn } from '@/lib/utils'  
-import { Socket } from '@/socket'
+import { cn } from '../../lib/utils'  
+import { Socket } from '../../socket'
 import { useState } from 'react'
 
 export default function CustomInput({

@@ -1,8 +1,6 @@
-import Login from "@/components/custom/login";
+import Login from "../components/custom/login";
 import { TypingAnimation } from "../components/magicui/typing-animation";
-import GifComponent from "@/components/custom/gifComponent";
-import { useEffect } from "react";
-import { Socket } from "../socket"
+import GifComponent from "../components/custom/gifComponent";
 
 
 export default function Landing() {
