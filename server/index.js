@@ -3,7 +3,7 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { GameManager } from './gameManager.js'
 
-const PORT = 8080;
+const PORT = Number(process.env.PORT) || 8080;
 const BACKEND_URL = 'http://localhost';
 const app = express();
 const httpServer = createServer(app);
@@ -18,7 +18,6 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-    console.log(socket.id, 'Connected\n');
     gameManager.handleConnection(socket);
 });
 
