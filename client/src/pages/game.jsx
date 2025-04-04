@@ -103,6 +103,9 @@ export default function Game(){
         return tag;
     }
     
+    const resetWords=(code)=>{
+        Socket.emit("resetWords",code);
+    }
     const handleTurn=(givenTurn)=>{
         const tag=findingTag();
         if(tag == givenTurn){
@@ -163,7 +166,7 @@ export default function Game(){
     return(
         (!won)
         ?(<div className="flex flex-col justify-center w-full">
-            <div className="flex items-start justify-end mr-20">    
+            <div className="flex items-start justify-end lg:mr-20">    
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="outline">{username}</Button>
@@ -227,6 +230,8 @@ export default function Game(){
                                 {turnOper && <Button onClick={()=>endGuess(code,isRed)} className="mb-2">End Guess</Button>}
                             </>
                     )}
+                </div>
+                <div>
                     <Logboard className="min-h-[50%] max-h-full"/>
                 </div>
                 <TeamBoard score={blueScore} className="col-span-1 col-start-5 row-start-2 lg:row-start-1 row-span-1 lg:row-span-2 h-full text-blue-500">

@@ -2,7 +2,10 @@ import { io } from "socket.io-client"
 import { useNavigate } from "react-router-dom"
 
     // export const Socket = io("http://localhost:8080") use this for local testing
-    export const Socket = io("https://codenames-c0ux.onrender.com")
+    export const Socket = io("https://codenames-c0ux.onrender.com",{
+        transports: ["websocket"], // Force WebSockets instead of polling
+        withCredentials: true // Ensures cookies are sent if needed
+    })
 
 Socket.on("gameEnded",()=>{
     alert("Game has already ended");
