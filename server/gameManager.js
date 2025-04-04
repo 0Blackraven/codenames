@@ -88,7 +88,7 @@ export class GameManager {
                         if (room.users.length === 0) {
                             activeRooms.delete(roomCode);
                         }
-                    }, 1000);
+                    }, 3 * 60 * 1000);
                     }
                 }
             client.removeAllListeners();
