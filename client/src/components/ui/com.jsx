@@ -24,7 +24,7 @@ export default function NumberComboBox({ onChange }) {
             key={num}
             variant="ghost"
             size="sm"
-            className="w-8 h-8 flex items-center justify-center"
+            className="w-8 h-8 flex items-center justify-center text-green-500"
             onClick={() => handleSelect(num)}
           >
             {num}

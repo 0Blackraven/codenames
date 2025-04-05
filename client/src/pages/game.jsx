@@ -171,7 +171,7 @@ export default function Game(){
     return(
         (!won)
         ?(<div className="flex flex-col justify-center w-full">
-            <div className="flex items-start justify-end lg:mr-20 mr-15 border-4 border-black">    
+            <div className="flex items-start justify-end lg:mr-20 mr-15 ">    
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="outline">{username}</Button>
@@ -203,7 +203,7 @@ export default function Game(){
                 </DropdownMenu>
             </div>
             <div className="grid grid-cols-[repeat(5,1fr)] grid-rows-[12fr_2fr_11fr] lg:p-1 border-4 border-black">
-                <TeamBoard score={redScore} className="col-start-1 col-span-1 row-start-3 row-span-1 lg:col-span-1 lg:col-start-1 lg:row-start-1 lg:row-span-3 h-full text-red-500 border-4 border-black">
+                <TeamBoard score={redScore} className="col-start-1 col-span-1 row-start-3 row-span-1 lg:col-span-1 lg:col-start-1 lg:row-start-1 lg:row-span-3 h-full text-red-500 ">
                 <div>
                     <h4 className='font-bold'>SPYMASTER</h4>
                     {!isRed && !isBlue && !isSpymaster && (<Button onClick={redSpyHandler}className="text-[10px] lg:text-[15px]">Join As SpyMaster</Button>)}
@@ -221,13 +221,13 @@ export default function Game(){
                     </div>
                 </div>
                 </TeamBoard >
-                <div className="col-span-5 lg:col-span-3 col-start-1 lg:col-start-2 row-start-1 row-span-1 lg:p-2 pb-1 border-4 border-black">
+                <div className="col-span-5 lg:col-span-3 col-start-1 lg:col-start-2 row-start-1 row-span-1 lg:p-2 pb-1 ">
                     <GameBoard 
                         turn={turn} 
                         redScore={redScore}
                         blueScore={blueScore}/>
                 </div>
-                <div className='lg:col-span-3 lg:col-start-2 col-start-1 col-span-5 row-start-2 row-span-1 border-4 border-white'>
+                <div className='lg:col-span-3 lg:col-start-2 col-start-1 col-span-5 row-start-2 row-span-1 '>
                     {!turn ? (<div  className="p-2">{msg}</div>
                         ) : (
                             <>
@@ -236,10 +236,10 @@ export default function Game(){
                             </>
                     )}
                 </div>
-                <div className=' col-start-2 col-end-5 row-start-3 row-span-1 lg:p-4 border-4 border-black w-full'>
+                <div className=' col-start-2 col-end-5 row-start-3 row-span-1 lg:p-4 w-full'>
                     <Logboard className="min-h-full"/>
                 </div>
-                <TeamBoard score={blueScore} className="col-span-1 col-start-5 row-start-3 lg:row-start-1 row-span-1 lg:row-span-3 h-full text-blue-500 border-4 border-black">
+                <TeamBoard score={blueScore} className="col-span-1 col-start-5 row-start-3 lg:row-start-1 row-span-1 lg:row-span-3 h-full text-blue-500 ">
                 <div>
                     <h4 className='font-bold'>SPYMASTER</h4>
                     {!isRed && !isBlue && !isSpymaster && (<Button onClick={blueSpyHandler}className="text-[10px] lg:text-[15px]">Join As SpyMaster</Button>)}
