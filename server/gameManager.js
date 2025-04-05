@@ -35,19 +35,23 @@ export class GameManager {
     handleConnection(client) {
         client.on('reconnect', (code, username) => {
             const room = activeRooms.get(code);
-            const turn = room.turn;
-            if(room.gameOver){
-                client.emit("gameEnded");
-                return;
-            }
             if (!room) {
                 client.emit("Expired Session");
+                return;
+            }
+            if(room.gameOver){
+                client.emit("gameEnded");
                 return;
             }
             if (room.users.length >= 14) {
                 client.emit("roomFull");
                 return;
             }
+            const turn = room?.turn;
+            if(turn == undefined){
+                this.server.in(code).emit("serverCrashed");
+                return;
+            };
             client.join(code);
             client.emit("reconnectedlogs", room.logs);
             client.emit("turn",turn);
@@ -179,7 +183,11 @@ export class GameManager {
                 this.server.in(code).emit("notification", notification);
                 room.updateGuess(number);
                 (isRed)?room.updateTurn("redOper"):room.updateTurn("blueOper");
-                const turn= room.turn
+                const turn= room?.turn
+                if(turn == undefined){
+                    this.server.in(code).emit("serverCrashed");
+                    return;
+                }
                 this.server.in(code).emit("turn",turn);
             }
         });
@@ -191,7 +199,11 @@ export class GameManager {
                 return;
             }
             (isRed)?room.updateTurn("blueSpy"):room.updateTurn("redSpy");
-            const turn= room.turn
+            const turn= room?.turn
+            if(turn == undefined){
+                this.server.in(code).emit("serverCrashed");
+                return;
+            }
             this.server.in(code).emit("turn",turn);
         })
 
@@ -246,7 +258,11 @@ export class GameManager {
                 room.guessLeft -= 1;
                 if(room.guessLeft==0){
                     (isRed)?room.updateTurn("blueSpy"):room.updateTurn("redSpy");
-                    const turn= room.turn
+                    const turn= room?.turn
+                    if(turn == undefined){
+                        this.server.in(code).emit("serverCrashed");
+                        return;
+                    }
                     this.server.in(code).emit("turn",turn);
                 }
             }
@@ -264,7 +280,11 @@ export class GameManager {
                     room.guessLeft -= 1;
                     if(room.guessLeft==0){
                         (isRed)?room.updateTurn("blueSpy"):room.updateTurn("redSpy");
-                        const turn= room.turn
+                        const turn= room?.turn
+                        if(turn == undefined){
+                            this.server.in(code).emit("serverCrashed");
+                            return;
+                        }
                         this.server.in(code).emit("turn",turn);
                     }
                 }else{
@@ -279,7 +299,11 @@ export class GameManager {
                     room.updateGuess(0);
                     if(room.guessLeft==0){
                         (isRed)?room.updateTurn("blueSpy"):room.updateTurn("redSpy");
-                        const turn= room.turn
+                        const turn= room?.turn
+                        if(turn == undefined){
+                            this.server.in(code).emit("serverCrashed");
+                            return;
+                        }
                         this.server.in(code).emit("turn",turn);
                     }
                 }
@@ -298,7 +322,11 @@ export class GameManager {
                     room.guessLeft -= 1;
                     if(room.guessLeft==0){
                         (isRed)?room.updateTurn("blueSpy"):room.updateTurn("redSpy");
-                        const turn= room.turn
+                        const turn= room?.turn
+                        if(turn == undefined){
+                            this.server.in(code).emit("serverCrashed");
+                            return;
+                        }
                         this.server.in(code).emit("turn",turn);
                     }
                 }else{
@@ -313,7 +341,11 @@ export class GameManager {
                     room.updateGuess(0);
                     if(room.guessLeft==0){
                         (isRed)?room.updateTurn("blueSpy"):room.updateTurn("redSpy");
-                        const turn= room.turn
+                        const turn= room?.turn
+                        if(turn == undefined){
+                            this.server.in(code).emit("serverCrashed");
+                            return;
+                        }
                         this.server.in(code).emit("turn",turn);
                     }
                 }
@@ -374,6 +406,10 @@ export class GameManager {
                 return;
             }
             const turn = room?.turn
+            if(turn == undefined){
+                this.server.in(code).emit("serverCrashed");
+                return;
+            }
             this.server.in(code).emit("turn",turn);
         })
     }

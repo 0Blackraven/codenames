@@ -37,9 +37,14 @@ export default function Game(){
     const [turn, setTurn] = useState(false);
     const [turnSpy, setTurnSpy] = useState(false);
     const [turnOper, setTurnOper] = useState(false);
+    const [hasCrashed, setHasCrashed] = useState(false);
     
     useEffect(()=>{
         
+        Socket.on("serverCrashed",()=>{
+            alert("Room has crashed. Please create a new room.");
+            navigate("/");
+        })
         Socket.emit("getWords", code);
         Socket.emit("getScores",code);
         setUsername(sessionStorage.getItem("username"));
