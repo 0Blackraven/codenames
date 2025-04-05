@@ -13,5 +13,5 @@
 <!-- so i used ABAC damn -->
 
 ## LIVE LINK :
-    https://codename-olive.vercel.app
+    Check out my project [live here](https://myproject.vercel.app).
     - Use this link to preview the app or clone the repo 
