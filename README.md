@@ -12,5 +12,5 @@ score tracking, and turn-based play
 <!-- so i used ABAC damn -->
 
 ## LIVE LINK :
-Check out my project [live here](https://myproject.vercel.app).
+Check out my project [live here](https://codename-olive.vercel.app).
 - Use this link to preview the app or clone the repo 
