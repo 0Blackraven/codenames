@@ -19,8 +19,10 @@ export default function Tile({ children , className , onClick}) {
         </div>
       </div>
       <div className=" bordet-t border-gray-400"></div>
-        <div className="text-center text-2sm overflow">{children}</div>
+      <div className="text-center text-[12px] lg:text-base hover:cursor-pointer">
+        {children}
       </div>
+    </div>
   );
 }
 

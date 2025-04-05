@@ -8,9 +8,9 @@ function App() {
   return (
     <Router>
       <div>
-        <ThemeButton className="fixed top-5 right-9"/>
+        <ThemeButton className="fixed lg:top-2 lg:right-9 right-3"/>
       </div>     
-      <Routes>
+      <Routes className="">
         <Route path = '/' element = {<Landing/>} /> 
         <Route path = '/:game' element = {<Game/>} />
       </Routes>

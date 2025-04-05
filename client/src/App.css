@@ -1,5 +1,12 @@
 #root {
+  padding-top: 1rem;
   margin: auto;
-  padding: 2rem;
   text-align: center;
+}
+
+/* Only apply padding on large screens */
+@media (min-width: 1024px) {
+  #root {
+    padding: 1rem;
+  }
 }

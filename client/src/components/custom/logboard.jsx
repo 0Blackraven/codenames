@@ -49,7 +49,7 @@ export function Logboard({ className }) {
   }, [notifications]); // Empty dependency array ensures this runs only once
 
   return (
-    <div className={cn("justify-center items-center border-2 border-gray-200 rounded-lg mx-auto",className)}>
+    <div className={cn("justify-center items-center border-2 border-gray-200 lg:rounded-lg mx-auto",className)}>
       <div className={cn("overflow-hidden", className)}>
         <AnimatedList>
           {notifications.map((item, idx) => (

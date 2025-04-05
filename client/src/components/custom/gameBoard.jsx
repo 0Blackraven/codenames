@@ -43,7 +43,7 @@ export default function GameBoard({
   
   //red value=1 blue value=2 black value=3 neutral value=0
   return (
-    <div className={cn("grid grid-cols-[repeat(5,1fr)] grid-rows-[repeat(5,1fr)] gap-1",className)}>
+    <div className={cn("grid grid-cols-[repeat(5,1fr)] grid-rows-[repeat(5,1fr)] lg:gap-1",className)}>
       {words.map((wordObj, index) => (
         <Tile 
           key={index}
