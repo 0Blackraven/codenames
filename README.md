@@ -11,5 +11,5 @@ score tracking, and turn-based play . Uses ABAC
 - React/Tailwind (for frontend)
 
 ## LIVE LINK :
-Check out my project [Link](https://codename-olive.vercel.app).
+Check out my project [https://codename-olive.vercel.app](https://codename-olive.vercel.app).
 - Use this link to preview the app or clone the repo 
